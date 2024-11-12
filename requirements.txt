@@ -1,0 +1,7 @@
+numpy
+pandas
+requests
+scikit_learn
+scipy
+streamlit
+spotlight @ https://github.com/maciejkula/spotlight/archive/master.zip
