@@ -2,12 +2,14 @@
 
 A movie recommendation system that uses collaborative filtering to recommend movies to users based on their preferences. The system uses the MovieLens dataset to train the model and make predictions. The system is built using Python and the Streamlit library for the front-end and back-end.
 
+![MovieEnder](presentations/moviender-content-based-demo.png)
+
 ## Project Structure
 
 The project is structured as follows:
 
 - `app.py`: The main file that contains the code for the Streamlit application
-- `movielens-analysis.ipynb`: A Jupyter notebook that contains the code for data analysis and model building
+- `/notebooks`: Notebook directory that contains the code for data analysis and model building
 
 ## Dataset
 
