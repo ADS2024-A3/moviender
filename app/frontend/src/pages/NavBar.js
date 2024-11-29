@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import React from 'react';
 
-const NavBar = ({language, onColorChange, onLanguageChange}) => {
+const NavBar = ({language, onColorChange, onLanguageChange, onSearchChange}) => {
   const handleColorChange = (id) => {
     let primary, secondary, text;
     switch (id) {
@@ -40,6 +40,10 @@ const NavBar = ({language, onColorChange, onLanguageChange}) => {
   }
     onLanguageChange(newLanguage);  
   };
+
+  const handleSearchChange = (event) => {
+    onSearchChange(event.value);
+  }
 
   return (
     <nav className="navbar navbar-expand-sm txt-color bg-color">
@@ -145,7 +149,7 @@ const NavBar = ({language, onColorChange, onLanguageChange}) => {
                     language === 'Englisch' ? 'Search' :
                     language === 'Spanisch' ? 'Busca' :
                     'Suche'
-                    }
+                    } onChange={handleSearchChange}
                 />
                 <button className="btn btn-color" type="button">
                 <i className="fa-solid fa-magnifying-glass"></i>

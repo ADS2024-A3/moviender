@@ -1,100 +1,71 @@
-import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MovieCard from '../components/MovieCard';
 
-const SelectMovies = ({ user, language }) => {
-    // State to store the fetched sets data
-    const [components, setComponents] = useState([]);
+const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, genres, currentGenre, onGenreChange, handleInteraction, loadRecommendations, loadingMovies }) => {
+    const navigate = useNavigate();
 
-    const handleInteraction = async (index, event) => {
-        try {
-            const interactionData = {
-                movie_id: components[index].id
-            }
-    
-            const response = await fetch(`/api/handle-interaction`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(interactionData)
-            });
-    
-            const result = await response.json();
-            console.log('Interaction saved:', result);
-        } catch (error) {
-            console.error('Error handling user interaction:', error);
-        }
-    };
-
-    // // useEffect to fetch the sets when the component mounts
-    // useEffect(() => {
-    //     const fetchData = () => {
-    //         fetch(`http://127.0.0.1:8000/api/sets/?user_id=${user}`)
-    //             .then(response => response.json())
-    //             .then(data => {
-    //                 if (data.exists) {
-    //                     setComponents(data.sets);
-    //                 } else {
-    //                     console.error('Movies not found.');
-    //                 }
-    //             })
-    //             .catch(error => {
-    //                 console.error('Error fetching movie data:', error);
-    //             });
-    //     };
-
-    //     fetchData();
-    // }, [user]); // The effect will re-run if the user prop changes
-
-    useEffect(() => {
-        const comp1 = {
-            title: 'Star Wars IV',
-            description: 'Tom\'s favourite movie of all time.',
-            release: '07.11.1977'
-        };
-
-        const comp2 = {
-            title: 'The Wild Robot',
-            description: 'Sebastian\'s favourite movie of all time.',
-            release: '11.10.2024'
-        };
-
-        const comp3 = {
-            title: 'Poor Things',
-            description: 'Valentina\'s favourite movie of all time.',
-            release: '08.12.2023'
-        };
-
-        const comp4 = {
-            title: 'The Godfather',
-            description: 'Heard it is good.',
-            release: '20.10.1972'
-        };
-
-        const comp5 = {
-            title: 'El Clásico 2024',
-            description: 'Most extreme horror movie for fans of Real Madrid.',
-            release: '26.10.2024'
-        };
-
-        const comp6 = {
-            title: 'Blackfish',
-            description: 'Documentary about orcas.',
-            release: '31.10.2013'
-        };
-
-        const comps = [comp1, comp2, comp3, comp4, comp5, comp6];
-        setComponents(comps);
-    }, []);
+    const handleClick = () => {
+        loadRecommendations();
+        navigate('/recommendations');
+    }
 
     return (
         <div className="container">
-            <div className="row justify-content-center">
-                {components.map((component, index) => (
-                    <div key={index} className="col-sm-12 col-md-6 col-lg-3 mb-4 d-flex justify-content-center">
-                        <MovieCard key={index} title={component.title} description={component.description} release={component.release} handleInteraction={handleInteraction} />
+            <nav className="navbar navbar-expand-sm txt-color bg-color">
+                <div className="container-fluid">
+                    <div className="collapse navbar-collapse" id="mynavbar">
+                    <ul className="navbar-nav me-auto">
+                        <li className="nav-item item-color dropdown">
+                        <button className="nav-link dropdown-toggle" id="navbarDropdownMenuLink1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {
+                            'Genre'
+                            }
+                        </button>
+                        <ul className="dropdown-menu drop-item-color" aria-labelledby="navbarDropdownMenuLink1">
+                            {genres.map((genre, index) => (
+                            <li key={index}><button className="dropdown-item" id="buttonDeutsch" onClick={() => onGenreChange(genre)}>
+                            {
+                                genre
+                            }
+                            </button></li>
+                            ))}
+                        </ul>
+                        </li>
+                    </ul>
+                    <form className="d-flex">
+                        <input className="form-control me-2" type="text" placeholder={
+                            language === 'Deutsch' ? 'Suche' :
+                            language === 'Englisch' ? 'Search' :
+                            language === 'Spanisch' ? 'Busca' :
+                            'Suche'
+                            } onChange={(e) => onSearchChange(e.target.value)}
+                        />
+                        <button className="btn btn-color" type="button">
+                        <i className="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </form>
                     </div>
-                ))}
+                </div>
+            </nav>
+            {loadingMovies ? (
+                <p>Loading Movies...</p>  // Display loading text while waiting for the movies
+            ) : (
+                <div className="row justify-content-center">
+                    {currentMovies.length > 0 ? (
+                        currentMovies.map((movie, index) => (
+                            <div key={index} className="col-sm-12 col-md-6 col-lg-3 mb-4 d-flex justify-content-center">
+                                <MovieCard key={index} id={parseInt(index)} title={movie.title} description={movie.description} release={movie.release} handleInteraction={handleInteraction} isRecommendation={false} />
+                            </div>
+                        ))
+                    ) : (
+                        <p>No movies to display.</p>  // Show message if no movies are available
+                    )}
+                </div>
+            )}
+            <div className="row justify-content-center">
+                <button className="btn btn-color" onClick={handleClick}>
+                    <span>Match me!</span>
+                </button>
             </div>
         </div>
     );
