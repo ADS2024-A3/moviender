@@ -26,6 +26,78 @@ const SelectMovies = ({ user, language }) => {
         }
     };
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch("http://127.0.0.1:5000/api/movies");
+                const data = await response.json();
+                if (data) {
+                    console.log('Movies found:', data);
+                } else {
+                    console.error('Movies not found.');
+                }
+            } catch (error) {
+                console.error('Error fetching movie data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const new_user_ratings = {
+                    242: 1,
+                    302: 1,
+                    377: 3,
+                    346: 5,
+                    1090: 5,
+                    51: 1,
+                    225: 1,
+                    203: 3,
+                    476: 2,
+                    204: 5
+                }
+                const response = await fetch("http://127.0.0.1:5000/api/recommendations", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(new_user_ratings)
+                });
+                const data = await response.json();
+                if (data) {
+                    console.log('Recommendations:', data);
+                } else {
+                    console.error('No recommendations.');
+                }
+            } catch (error) {
+                console.error('Error fetching recommendations:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch("http://127.0.0.1:5000/api/genres");
+                const data = await response.json();
+                if (data) {
+                    console.log('Genres found:', data);
+                } else {
+                    console.error('Genres not found.');
+                }
+            } catch (error) {
+                console.error('Error fetching genres data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     // // useEffect to fetch the sets when the component mounts
     // useEffect(() => {
     //     const fetchData = () => {
