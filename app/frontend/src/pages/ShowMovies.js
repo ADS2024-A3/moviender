@@ -11,7 +11,7 @@ const ShowMovies = ({ user, language, currentMovies, loadingMovies }) => {
                     {currentMovies.length > 0 ? (
                         currentMovies.map((movie, index) => (
                             <div key={index} className="col-sm-12 col-md-6 col-lg-3 mb-4 d-flex justify-content-center">
-                                <MovieCard key={index} title={movie.title} description={movie.description} release={movie.release} />
+                                <MovieCard key={index} title={movie.title} description={movie.description} release={movie.release} isRecommendation={true} />
                             </div>
                         ))
                     ) : (
