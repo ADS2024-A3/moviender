@@ -12,7 +12,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
 const App = () => {
-    const moviesPerPage = 10;
+    const moviesPerPage = 20;
     const [primaryColor, setPrimaryColor] = useState('#6F00FF');
     const [secondaryColor, setSecondaryColor] = useState('#6F00FF');
     const [textColor, setTextColor] = useState('#000000');
@@ -43,6 +43,15 @@ const App = () => {
 
     const handleSearchChange = (newSearch) => {
         setSearch(newSearch);
+    }
+
+    const handlePageChange = (change) => {
+        setCurrentMoviePage(currentMoviePage + change);
+    }
+
+    const handleReset = () => {
+        setMovieSearch("");
+        setCurrentGenre("");
     }
 
     const handleMovieSearchChange = (newSearch) => {
@@ -146,9 +155,10 @@ const App = () => {
             const fetchGenreData = async () => {
                 try {
                     const response = await fetch("http://127.0.0.1:5000/api/genres");
-                    const data = await response.json();
+                    let data = await response.json();
                     if (data && data !== "unknown") {
                         console.log('Genres found:', data);
+                        data = data.filter(item => item !== "unknown").sort();
                         setGenres(data);
                     } else {
                         console.error('Genres not found.');
@@ -185,7 +195,7 @@ const App = () => {
             <Router>
                 <NavBar onColorChange={handleColorChange} onLanguageChange={handleLanguageChange} onSearchChange={handleSearchChange} language={language} /> 
                 <Routes>
-                    <Route exact path="/" element={<SelectMovies user={user} language={language} search={search} onSearchChange={handleMovieSearchChange} currentMovies={currentMovies} genres={genres} currentGenre={currentGenre} onGenreChange={handleGenreChange} handleInteraction={handleInteraction} loadRecommendations={loadRecommendations} loadingMovies={loadingMovies} selectedNumber={Object.keys(selectedMovies).length} />} />
+                    <Route exact path="/" element={<SelectMovies user={user} language={language} search={search} onSearchChange={handleMovieSearchChange} currentMovies={currentMovies} genres={genres} currentGenre={currentGenre} onGenreChange={handleGenreChange} handleInteraction={handleInteraction} loadRecommendations={loadRecommendations} loadingMovies={loadingMovies} selectedNumber={Object.keys(selectedMovies).length} handleReset={handleReset} currentMoviePage={currentMoviePage} handlePageChange={handlePageChange} />} />
                     <Route exact path="/recommendations" element={<ShowMovies user={user} language={language} currentMovies={recommendedMovies} loadingMovies={loadingRecommendedMovies} predictions={recommendedMoviesRating} />} />
                     <Route path="*" element={<NoSite language={language} />} />
                 </Routes>

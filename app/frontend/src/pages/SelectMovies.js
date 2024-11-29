@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import MovieCard from '../components/MovieCard';
 
-const SelectMovies = ({ user, language, onSearchChange, currentMovies, genres, onGenreChange, handleInteraction, loadRecommendations, loadingMovies, selectedNumber }) => {
+const SelectMovies = ({ user, language, onSearchChange, currentMovies, genres, onGenreChange, handleInteraction, loadRecommendations, loadingMovies, selectedNumber, handleReset, currentMoviePage, handlePageChange }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
@@ -32,6 +32,9 @@ const SelectMovies = ({ user, language, onSearchChange, currentMovies, genres, o
                         </ul>
                         </li>
                     </ul>
+                    <button className="navbar-brand" href="/" onClick={handleReset}>
+                        Reset
+                    </button>
                     <form className="d-flex">
                         <input className="form-control me-2" type="text" placeholder={
                             language === 'Deutsch' ? 'Suche' :
@@ -63,9 +66,22 @@ const SelectMovies = ({ user, language, onSearchChange, currentMovies, genres, o
                 </div>
             )}
             <div className="row justify-content-center">
-                <button disabled={selectedNumber < 10} className="btn btn-color" onClick={handleClick}>
+                <button disabled={selectedNumber < 10} style={{cursor: 'not-allowed', opacity: '0.5'}} className="btn btn-color" onClick={handleClick}>
                     <span>Match me!</span>
                 </button>
+            </div>
+            <div className="row justify-content-center">
+            <div className="col-2">
+                {currentMoviePage > 0 ? (
+                    <i className="fas fa-2x fa-arrow-left" onClick={handlePageChange(-1)}></i>
+                ) : null}            
+            </div>
+            <div className="col-8"></div>
+            <div className="col-2">
+                {currentMoviePage < 10 ? (
+                    <i className="fas fa-2x fa-arrow-right" onClick={handlePageChange(1)}></i>
+                ) : null}
+            </div>
             </div>
         </div>
     );

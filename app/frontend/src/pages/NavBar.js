@@ -52,7 +52,7 @@ const NavBar = ({language, onColorChange, onLanguageChange, onSearchChange}) => 
             {
                     language === 'Deutsch' ? 'Moviender' :
                     language === 'Englisch' ? 'Moviender' :
-                    language === 'Spanisch' ? 'Movienderc' :
+                    language === 'Spanisch' ? 'Moviender' :
                     'Moviender'
             }
             </a>
