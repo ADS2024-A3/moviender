@@ -1,6 +1,14 @@
+import { useNavigate } from 'react-router-dom';
 import MovieCard from '../components/MovieCard';
 
-const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, genres, currentGenre, onGenreChange, handleInteraction, loadRecommendations }) => {
+const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, genres, currentGenre, onGenreChange, handleInteraction, loadRecommendations, loadingMovies }) => {
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        loadRecommendations();
+        navigate('/recommendations');
+    }
+
     return (
         <div className="container">
             <nav className="navbar navbar-expand-sm txt-color bg-color">
@@ -39,17 +47,25 @@ const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, g
                     </div>
                 </div>
             </nav>
+            {loadingMovies ? (
+                <p>Loading Movies...</p>  // Display loading text while waiting for the movies
+            ) : (
+                <div className="row justify-content-center">
+                    {currentMovies.length > 0 ? (
+                        currentMovies.map((movie, index) => (
+                            <div key={index} className="col-sm-12 col-md-6 col-lg-3 mb-4 d-flex justify-content-center">
+                                <MovieCard key={index} id={parseInt(index)} title={movie.title} description={movie.description} release={movie.release} handleInteraction={handleInteraction} />
+                            </div>
+                        ))
+                    ) : (
+                        <p>No movies to display.</p>  // Show message if no movies are available
+                    )}
+                </div>
+            )}
             <div className="row justify-content-center">
-                {currentMovies.map((component, index) => (
-                    <div key={index} className="col-sm-12 col-md-6 col-lg-3 mb-4 d-flex justify-content-center">
-                        <MovieCard key={index} title={component.title} description={component.description} release={component.release} handleInteraction={handleInteraction} />
-                    </div>
-                ))}
-            </div>
-            <div className="row justify-content-center">
-                <a href="/recommendations" className="btn btn-color" type="button" onClick={loadRecommendations}>
+                <button className="btn btn-color" onClick={handleClick}>
                     <span>Match me!</span>
-                </a>
+                </button>
             </div>
         </div>
     );

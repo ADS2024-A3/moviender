@@ -25,6 +25,8 @@ const App = () => {
     const [selectedMovies, setSelectedMovies] = useState({});
     const [recommendedMovies, setRecommendedMovies] = useState([]);
     
+    const [loadingMovies, setLoadingMovies] = useState(true); 
+    const [loadingRecommendedMovies, setLoadingRecommendedMovies] = useState(true); 
     const [genres, setGenres] = useState([]);
     const [allMovies, setAllMovies] = useState([]);
 
@@ -92,12 +94,11 @@ const App = () => {
     }
 
     const handleInteraction = (star, key) => {
-        setSelectedMovies((prevSelectedMovies) => {
-            const updatedMovies = { ...prevSelectedMovies }; // Create a shallow copy to avoid mutating state directly
-            updatedMovies[key] = star; // Add or update the key with the new star rating
-            return updatedMovies;
-        });
+        const newSelectedMovies = selectedMovies;
+        newSelectedMovies[key] = star;
+        setSelectedMovies(newSelectedMovies);
         console.log("Interaction saved.");
+        console.log(selectedMovies);
         if (Object.keys(selectedMovies).length === 10) {
             // error handling
         }
@@ -106,16 +107,20 @@ const App = () => {
     const loadCurrentMovies = () => {
         // filter all Movies by genre, word, year and return the first 10
         setCurrentMovies(allMovies.slice(0, 6));
-    }
+    } 
 
     const loadRecommendations = async () => {
         try {
             const recommendations = [];
             for (let key of Object.keys(selectedMovies)) {
-                recommendations.add(allMovies[parseInt(key)]);
-            }            
+                console.log(key);
+                console.log(allMovies[parseInt(key)]);
+                recommendations.push(allMovies[parseInt(key)]);
+            }           
             setRecommendedMovies(recommendations);
+            setLoadingRecommendedMovies(false);
             console.log("Recommended movies saved.");
+            console.log(recommendations);
         } catch (error) {
             console.error('Error while loading recommended movies:', error)
         }
@@ -128,6 +133,7 @@ const App = () => {
             setGenres([' ', 'Science Fiction', 'Fantasy', 'Thriller', 'Comedy']);
             console.log("Genres saved.");
             loadCurrentMovies();
+            setLoadingMovies(false);
             console.log("Current movies loaded.");
         } catch (error) {
             console.error('Error while loading all movies:', error);
@@ -152,8 +158,8 @@ const App = () => {
             <Router>
                 <NavBar onColorChange={handleColorChange} onLanguageChange={handleLanguageChange} onSearchChange={handleSearchChange} language={language} /> 
                 <Routes>
-                    <Route exact path="/" element={<SelectMovies user={user} language={language} search={search} onSearchChange={handleMovieSearchChange} currentMovies={currentMovies} genres={genres} currentGenre={currentGenre} onGenreChange={handleGenreChange} handleInteraction={handleInteraction} loadRecommendations={loadRecommendations} />} />
-                    <Route exact path="/recommendations" element={<ShowMovies user={user} language={language} currentMovies={recommendedMovies} loadRecommendations={loadRecommendations} />} />
+                    <Route exact path="/" element={<SelectMovies user={user} language={language} search={search} onSearchChange={handleMovieSearchChange} currentMovies={currentMovies} genres={genres} currentGenre={currentGenre} onGenreChange={handleGenreChange} handleInteraction={handleInteraction} loadRecommendations={loadRecommendations} loadingMovies={loadingMovies} />} />
+                    <Route exact path="/recommendations" element={<ShowMovies user={user} language={language} currentMovies={recommendedMovies} loadingMovies={loadingRecommendedMovies} />} />
                     <Route path="*" element={<NoSite language={language} />} />
                 </Routes>
                 <Footer language={language} />

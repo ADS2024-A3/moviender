@@ -8,7 +8,7 @@ import godfatherImage from '../ressources/TheGodfather.jpg';
 import clasicoImage from '../ressources/ElClasico.jpg';
 import blackfishImage from '../ressources/Blackfish.jpg';
 
-const MovieCard = ({ title, description, release, handleInteraction }) => {
+const MovieCard = ({ id, title, description, release, handleInteraction }) => {
     const [rating, setRating] = useState(0); // Current selected rating
     const [hover, setHover] = useState(0); // Current hovered star index
 
@@ -39,7 +39,7 @@ const MovieCard = ({ title, description, release, handleInteraction }) => {
 
     const handleClick = (star) => {
         setRating(star); 
-        handleInteraction(star, MovieCard.key);
+        handleInteraction(star, id);
     }
 
     return (
