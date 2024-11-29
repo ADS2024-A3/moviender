@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import MovieCard from '../components/MovieCard';
 
-const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, genres, currentGenre, onGenreChange, handleInteraction, loadRecommendations, loadingMovies }) => {
+const SelectMovies = ({ user, language, onSearchChange, currentMovies, genres, onGenreChange, handleInteraction, loadRecommendations, loadingMovies, selectedNumber }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
@@ -54,7 +54,7 @@ const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, g
                     {currentMovies.length > 0 ? (
                         currentMovies.map((movie, index) => (
                             <div key={index} className="col-sm-12 col-md-6 col-lg-3 mb-4 d-flex justify-content-center">
-                                <MovieCard key={index} id={parseInt(index)} title={movie.title} description={movie.description} release={movie.release} handleInteraction={handleInteraction} isRecommendation={false} />
+                                <MovieCard key={index} id={movie.movieId} title={movie.title} genres={movie.genres} ratingCount={movie.ratingCount} year={movie.year} tmdbId={movie.tmdbId} handleInteraction={handleInteraction} isRecommendation={false} />
                             </div>
                         ))
                     ) : (
@@ -63,7 +63,7 @@ const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, g
                 </div>
             )}
             <div className="row justify-content-center">
-                <button className="btn btn-color" onClick={handleClick}>
+                <button disabled={selectedNumber < 10} className="btn btn-color" onClick={handleClick}>
                     <span>Match me!</span>
                 </button>
             </div>

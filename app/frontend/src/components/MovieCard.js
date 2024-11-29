@@ -8,7 +8,7 @@ import godfatherImage from '../ressources/TheGodfather.jpg';
 import clasicoImage from '../ressources/ElClasico.jpg';
 import blackfishImage from '../ressources/Blackfish.jpg';
 
-const MovieCard = ({ id, title, description, release, handleInteraction, isRecommendation }) => {
+const MovieCard = ({ id, title, genres, ratingCount, year, tmdbId, handleInteraction, isRecommendation, prediction }) => {
     const [rating, setRating] = useState(0); // Current selected rating
     const [hover, setHover] = useState(0); // Current hovered star index
     const [hoverTimes, setHoverTimes] = useState(false);
@@ -66,10 +66,12 @@ const MovieCard = ({ id, title, description, release, handleInteraction, isRecom
                 <img src={Image} className="card-img-top movie-card-img" alt={title} />
                 <div className="card-body">
                     <h5 className="card-title item-color">{title}</h5>
-                    <p className="card-text item-color">{description}</p>
+                    <p className="card-text item-color">{genres[0]}</p>
+                    <p className="card-text item-color">Rating count: {ratingCount}</p>
+                    <p className="card-text item-color">Predicted rating: {prediction}</p>
                 </div>
                 <ul className="list-group list-group-flush">
-                    <li className="list-group-item item-color">Release: {release}</li>
+                    <li className="list-group-item item-color">Release: {year}</li>
                 </ul>
                 <div className="card-body text-center">
                     <div className="container-fluid">
@@ -111,8 +113,8 @@ const MovieCard = ({ id, title, description, release, handleInteraction, isRecom
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleCloseModal}></button>
                         </div>
                         <div className="modal-body">
-                            <p>{description}</p>
-                            <p><strong>Release Date:</strong> {release}</p>
+                            <p>{genres[0]}</p>
+                            <p><strong>Release Date:</strong> {year}</p>
                         </div>
                         <iframe width="100%" height="100%" src="https://www.youtube.com/embed/vZ734NWnAHA?si=uUfsf5apzcXnxzoc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                         <div className="modal-footer">

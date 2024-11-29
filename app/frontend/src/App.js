@@ -12,6 +12,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
 const App = () => {
+    const moviesPerPage = 10;
     const [primaryColor, setPrimaryColor] = useState('#6F00FF');
     const [secondaryColor, setSecondaryColor] = useState('#6F00FF');
     const [textColor, setTextColor] = useState('#000000');
@@ -21,50 +22,15 @@ const App = () => {
     const [user, setUser] = useState(null);
     const [currentMovies, setCurrentMovies] = useState([]);
     const [currentMoviePage, setCurrentMoviePage] = useState(1);
-    const [currentGenre, setCurrentGenre] = useState([]);
+    const [currentGenre, setCurrentGenre] = useState('');
     const [selectedMovies, setSelectedMovies] = useState({});
     const [recommendedMovies, setRecommendedMovies] = useState([]);
+    const [recommendedMoviesRating, setRecommendedMoviesRating] = useState([]);
     
     const [loadingMovies, setLoadingMovies] = useState(true); 
     const [loadingRecommendedMovies, setLoadingRecommendedMovies] = useState(true); 
     const [genres, setGenres] = useState([]);
     const [allMovies, setAllMovies] = useState([]);
-
-    const comp1 = {
-        title: 'Star Wars IV',
-        description: 'Tom\'s favourite movie of all time.',
-        release: '07.11.1977'
-    };
-
-    const comp2 = {
-        title: 'The Wild Robot',
-        description: 'Sebastian\'s favourite movie of all time.',
-        release: '11.10.2024'
-    };
-
-    const comp3 = {
-        title: 'Poor Things',
-        description: 'Valentina\'s favourite movie of all time.',
-        release: '08.12.2023'
-    };
-
-    const comp4 = {
-        title: 'The Godfather',
-        description: 'Heard it is good.',
-        release: '20.10.1972'
-    };
-
-    const comp5 = {
-        title: 'El Clásico 2024',
-        description: 'Most extreme horror movie for fans of Real Madrid.',
-        release: '26.10.2024'
-    };
-
-    const comp6 = {
-        title: 'Blackfish',
-        description: 'Documentary about orcas.',
-        release: '31.10.2013'
-    };
 
     const handleColorChange = (primary, secondary, text) => {
         setPrimaryColor(primary);
@@ -81,6 +47,7 @@ const App = () => {
 
     const handleMovieSearchChange = (newSearch) => {
         setMovieSearch(newSearch);
+        setCurrentMoviePage(1);
         loadCurrentMovies();
     }
 
@@ -90,37 +57,69 @@ const App = () => {
         } else {
             setCurrentGenre(newGenre);
         }
+        setCurrentMoviePage(1);
         loadCurrentMovies();
     }
 
-    const handleInteraction = (star, key) => {
+    const handleInteraction = (star, id) => {
         const newSelectedMovies = selectedMovies;
-        newSelectedMovies[key] = star;
+        newSelectedMovies[id] = star;
         setSelectedMovies(newSelectedMovies);
         console.log("Interaction saved.");
         console.log(selectedMovies);
-        if (Object.keys(selectedMovies).length === 10) {
-            // error handling
-        }
     };    
 
     const loadCurrentMovies = () => {
-        // filter all Movies by genre, word, year and return the first 10
-        setCurrentMovies(allMovies.slice(0, 6));
+        let newCurrentMovies = [];
+        let counter = 0;
+        for (let movie of allMovies) {
+            if (!currentGenre || currentGenre.trim() === '' || movie.genres.includes(currentGenre)) {
+                counter ++;
+                if (counter > moviesPerPage * (currentMoviePage-1)) {
+                    if (!movieSearch || movieSearch.trim() === '' || movie.title.startsWith(movieSearch)) {
+                        newCurrentMovies.push(movie);
+                        if (counter >= moviesPerPage * currentMoviePage) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        setCurrentMovies(newCurrentMovies);
     } 
 
     const loadRecommendations = async () => {
         try {
-            const recommendations = [];
-            for (let key of Object.keys(selectedMovies)) {
-                console.log(key);
-                console.log(allMovies[parseInt(key)]);
-                recommendations.push(allMovies[parseInt(key)]);
-            }           
-            setRecommendedMovies(recommendations);
-            setLoadingRecommendedMovies(false);
-            console.log("Recommended movies saved.");
-            console.log(recommendations);
+            const fetchData = async () => {
+                try {
+                    const response = await fetch("http://127.0.0.1:5000/api/recommendations", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(Object.fromEntries(Object.entries(selectedMovies).slice(0, 10)))
+                    });
+                    console.log(selectedMovies);
+                    const data = await response.json();  
+                    let recommendations = [];
+                    let recommedationsRating = [];
+                    for (let d of data) {
+                        recommendations.push(allMovies[d.item_id]);
+                        recommedationsRating.push(d.rating);
+                    } 
+                    setRecommendedMovies(recommendations);
+                    setRecommendedMoviesRating(recommedationsRating);
+                    setLoadingRecommendedMovies(false);
+                    if (data) {
+                        console.log('Recommendations:', data);
+                    } else {
+                        console.error('No recommendations.');
+                    }
+                } catch (error) {
+                    console.error('Error fetching recommendations:', error);
+                }
+            };
+            fetchData();
         } catch (error) {
             console.error('Error while loading recommended movies:', error)
         }
@@ -128,10 +127,38 @@ const App = () => {
 
     const loadAllMovies = async () => {
         try {
-            setAllMovies([comp1, comp2, comp3, comp4, comp5, comp6]);
-            console.log("Movies saved.")
-            setGenres([' ', 'Science Fiction', 'Fantasy', 'Thriller', 'Comedy']);
-            console.log("Genres saved.");
+            const fetchData = async () => {
+                try {
+                    const response = await fetch("http://127.0.0.1:5000/api/movies");
+                    const data = await response.json();
+                    if (data) {
+                        console.log('Movies found:', data);
+                        setAllMovies(data);
+                    } else {
+                        console.error('Movies not found.');
+                    }
+                } catch (error) {
+                    console.error('Error fetching movie data:', error);
+                }
+            };
+            fetchData();
+
+            const fetchGenreData = async () => {
+                try {
+                    const response = await fetch("http://127.0.0.1:5000/api/genres");
+                    const data = await response.json();
+                    if (data && data !== "unknown") {
+                        console.log('Genres found:', data);
+                        setGenres(data);
+                    } else {
+                        console.error('Genres not found.');
+                    }
+                } catch (error) {
+                    console.error('Error fetching genres data:', error);
+                }
+            };
+            fetchGenreData();
+
             loadCurrentMovies();
             setLoadingMovies(false);
             console.log("Current movies loaded.");
@@ -158,8 +185,8 @@ const App = () => {
             <Router>
                 <NavBar onColorChange={handleColorChange} onLanguageChange={handleLanguageChange} onSearchChange={handleSearchChange} language={language} /> 
                 <Routes>
-                    <Route exact path="/" element={<SelectMovies user={user} language={language} search={search} onSearchChange={handleMovieSearchChange} currentMovies={currentMovies} genres={genres} currentGenre={currentGenre} onGenreChange={handleGenreChange} handleInteraction={handleInteraction} loadRecommendations={loadRecommendations} loadingMovies={loadingMovies} />} />
-                    <Route exact path="/recommendations" element={<ShowMovies user={user} language={language} currentMovies={recommendedMovies} loadingMovies={loadingRecommendedMovies} />} />
+                    <Route exact path="/" element={<SelectMovies user={user} language={language} search={search} onSearchChange={handleMovieSearchChange} currentMovies={currentMovies} genres={genres} currentGenre={currentGenre} onGenreChange={handleGenreChange} handleInteraction={handleInteraction} loadRecommendations={loadRecommendations} loadingMovies={loadingMovies} selectedNumber={Object.keys(selectedMovies).length} />} />
+                    <Route exact path="/recommendations" element={<ShowMovies user={user} language={language} currentMovies={recommendedMovies} loadingMovies={loadingRecommendedMovies} predictions={recommendedMoviesRating} />} />
                     <Route path="*" element={<NoSite language={language} />} />
                 </Routes>
                 <Footer language={language} />
