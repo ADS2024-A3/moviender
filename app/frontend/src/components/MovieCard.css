@@ -9,3 +9,36 @@
     height: 14rem; /* Adjust height to fit within the card */
     object-fit: cover; /* Ensures image covers the container proportionally */
 }
+
+/* Container for the star rating */
+.star-rating {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+/* Container for the star rating */
+.star-rating {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+/* Font Awesome stars */
+.star-rating .fa-star {
+    font-size: 1.5rem;
+    margin: 0 0.2rem;
+    cursor: pointer;
+    color: #ccc; /* Default color for unselected stars */
+    transition: color 0.2s;
+}
+
+/* Filled stars */
+.star-rating .fa-star.fas {
+    color: #ffd700; /* Gold for selected or rated stars */
+}
+
+/* Hover effect */
+.star-rating .fa-star:hover {
+    color: #ffcc00;
+}

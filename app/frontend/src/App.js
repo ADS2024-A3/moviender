@@ -22,6 +22,8 @@ const App = () => {
     const [currentMovies, setCurrentMovies] = useState([]);
     const [currentMoviePage, setCurrentMoviePage] = useState(1);
     const [currentGenre, setCurrentGenre] = useState([]);
+    const [selectedMovies, setSelectedMovies] = useState({});
+    const [recommendedMovies, setRecommendedMovies] = useState([]);
     
     const [genres, setGenres] = useState([]);
     const [allMovies, setAllMovies] = useState([]);
@@ -86,14 +88,40 @@ const App = () => {
         } else {
             setCurrentGenre(newGenre);
         }
+        loadCurrentMovies();
     }
+
+    const handleInteraction = (star, key) => {
+        setSelectedMovies((prevSelectedMovies) => {
+            const updatedMovies = { ...prevSelectedMovies }; // Create a shallow copy to avoid mutating state directly
+            updatedMovies[key] = star; // Add or update the key with the new star rating
+            return updatedMovies;
+        });
+        console.log("Interaction saved.");
+        if (Object.keys(selectedMovies).length === 10) {
+            // error handling
+        }
+    };    
 
     const loadCurrentMovies = () => {
         // filter all Movies by genre, word, year and return the first 10
         setCurrentMovies(allMovies.slice(0, 6));
     }
 
-    const loadAllMovies = async (index, event) => {
+    const loadRecommendations = async () => {
+        try {
+            const recommendations = [];
+            for (let key of Object.keys(selectedMovies)) {
+                recommendations.add(allMovies[parseInt(key)]);
+            }            
+            setRecommendedMovies(recommendations);
+            console.log("Recommended movies saved.");
+        } catch (error) {
+            console.error('Error while loading recommended movies:', error)
+        }
+    }
+
+    const loadAllMovies = async () => {
         try {
             setAllMovies([comp1, comp2, comp3, comp4, comp5, comp6]);
             console.log("Movies saved.")
@@ -101,39 +129,31 @@ const App = () => {
             console.log("Genres saved.");
             loadCurrentMovies();
             console.log("Current movies loaded.");
-            // const response = await fetch(`/api/movies`, {
-            //     method: 'GET',
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     }
-            // });
-
-            // const result = await response.json();
-            // // save result in allMovies constant
-            // // save genres from allMovies in genres constant
-            // console.log('Movies saved:', result);
         } catch (error) {
-            console.error('Error handling user interaction:', error);
+            console.error('Error while loading all movies:', error);
         }
     };
 
     useEffect(() => {
-        // Set CSS variables for theming
         document.documentElement.style.setProperty('--primary-color', primaryColor);
         document.documentElement.style.setProperty('--secondary-color', secondaryColor);
         document.documentElement.style.setProperty('--text-color', textColor);
     
-        loadAllMovies();
-    
     }, [primaryColor, secondaryColor, textColor]); 
+
+    useEffect(() => {
+        if (allMovies.length === 0) {  // Check if movies have already been loaded
+            loadAllMovies();
+        }
+    });
 
     return (
         <div className="App">
             <Router>
                 <NavBar onColorChange={handleColorChange} onLanguageChange={handleLanguageChange} onSearchChange={handleSearchChange} language={language} /> 
                 <Routes>
-                    <Route exact path="/" element={<SelectMovies user={user} language={language} search={search} onSearchChange={handleMovieSearchChange} currentMovies={currentMovies} genres={genres} currentGenre={currentGenre} onGenreChange={handleGenreChange} />} />
-                    <Route exact path="/recommendations" element={<ShowMovies user={user} language={language} search={search} onSearchChange={handleMovieSearchChange} currentMovies={currentMovies} genres={genres} currentGenre={currentGenre} onGenreChange={handleGenreChange} />} />
+                    <Route exact path="/" element={<SelectMovies user={user} language={language} search={search} onSearchChange={handleMovieSearchChange} currentMovies={currentMovies} genres={genres} currentGenre={currentGenre} onGenreChange={handleGenreChange} handleInteraction={handleInteraction} loadRecommendations={loadRecommendations} />} />
+                    <Route exact path="/recommendations" element={<ShowMovies user={user} language={language} currentMovies={recommendedMovies} loadRecommendations={loadRecommendations} />} />
                     <Route path="*" element={<NoSite language={language} />} />
                 </Routes>
                 <Footer language={language} />

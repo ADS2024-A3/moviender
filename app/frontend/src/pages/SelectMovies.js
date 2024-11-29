@@ -1,6 +1,6 @@
 import MovieCard from '../components/MovieCard';
 
-const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, genres, currentGenre, onGenreChange }) => {
+const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, genres, currentGenre, onGenreChange, handleInteraction, loadRecommendations }) => {
     return (
         <div className="container">
             <nav className="navbar navbar-expand-sm txt-color bg-color">
@@ -15,7 +15,7 @@ const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, g
                         </button>
                         <ul className="dropdown-menu drop-item-color" aria-labelledby="navbarDropdownMenuLink1">
                             {genres.map((genre, index) => (
-                            <li key={index}><button className="dropdown-item" id="buttonDeutsch" onClick={onGenreChange(genre)}>
+                            <li key={index}><button className="dropdown-item" id="buttonDeutsch" onClick={() => onGenreChange(genre)}>
                             {
                                 genre
                             }
@@ -30,7 +30,7 @@ const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, g
                             language === 'Englisch' ? 'Search' :
                             language === 'Spanisch' ? 'Busca' :
                             'Suche'
-                            } onChange={onSearchChange}
+                            } onChange={(e) => onSearchChange(e.target.value)}
                         />
                         <button className="btn btn-color" type="button">
                         <i className="fa-solid fa-magnifying-glass"></i>
@@ -42,14 +42,14 @@ const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, g
             <div className="row justify-content-center">
                 {currentMovies.map((component, index) => (
                     <div key={index} className="col-sm-12 col-md-6 col-lg-3 mb-4 d-flex justify-content-center">
-                        <MovieCard key={index} title={component.title} description={component.description} release={component.release} />
+                        <MovieCard key={index} title={component.title} description={component.description} release={component.release} handleInteraction={handleInteraction} />
                     </div>
                 ))}
             </div>
             <div className="row justify-content-center">
-                <button className="btn btn-color" type="button">
+                <a href="/recommendations" className="btn btn-color" type="button" onClick={loadRecommendations}>
                     <span>Match me!</span>
-                </button>
+                </a>
             </div>
         </div>
     );

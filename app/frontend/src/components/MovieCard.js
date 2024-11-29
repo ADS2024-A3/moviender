@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './MovieCard.css';
 
-import exampleImage from '../logo.svg';
 import starWarsImage from '../ressources/StarWars4.jpg';
 import wildRobotImage from '../ressources/TheWildRobot.jpg';
 import poorThingsImage from '../ressources/PoorThings.jpg';
@@ -10,7 +9,8 @@ import clasicoImage from '../ressources/ElClasico.jpg';
 import blackfishImage from '../ressources/Blackfish.jpg';
 
 const MovieCard = ({ title, description, release, handleInteraction }) => {
-    let Image = exampleImage;
+    const [rating, setRating] = useState(0); // Current selected rating
+    const [hover, setHover] = useState(0); // Current hovered star index
 
     // Conditionally set the image based on the title
     switch (title) {
@@ -33,8 +33,13 @@ const MovieCard = ({ title, description, release, handleInteraction }) => {
             Image = blackfishImage;
             break;
         default:
-            Image = exampleImage; // Default image if title doesn't match
+            Image = starWarsImage; // Default image if title doesn't match
             break;
+    }
+
+    const handleClick = (star) => {
+        setRating(star); 
+        handleInteraction(star, MovieCard.key);
     }
 
     return (
@@ -50,12 +55,17 @@ const MovieCard = ({ title, description, release, handleInteraction }) => {
             <div className="card-body text-center">
                 <div className="container-fluid">
                     <div className="row">
-                        <div className="col">
-                            <a href="#" className="card-link" onClick={handleInteraction}><i className="fa-regular fa-heart"></i></a>
-                        </div>
-                        <div className="col">
-                            <a href="#" className="card-link" onClick={handleInteraction}><i className="fa-solid fa-xmark"></i></a>
-                        </div>
+                    <div className="col star-rating">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                        <i
+                        key={star}
+                        className={`fa-star ${hover >= star || rating >= star ? 'fas' : 'far'}`}
+                        onMouseEnter={() => setHover(star)} // Temporary hover effect
+                        onMouseLeave={() => setHover(0)}  // Reset hover effect
+                        onClick={() => {handleClick(star)}}   // Permanently set rating
+                        ></i>
+                        ))}
+                    </div>
                     </div>
                 </div>
             </div>
