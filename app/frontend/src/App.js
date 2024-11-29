@@ -12,7 +12,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
 const App = () => {
-    const moviesPerPage = 20;
+    const moviesPerPage = 10;
     const [primaryColor, setPrimaryColor] = useState('#6F00FF');
     const [secondaryColor, setSecondaryColor] = useState('#6F00FF');
     const [textColor, setTextColor] = useState('#000000');
@@ -47,17 +47,19 @@ const App = () => {
 
     const handlePageChange = (change) => {
         setCurrentMoviePage(currentMoviePage + change);
+        loadCurrentMovies("page");
     }
 
     const handleReset = () => {
         setMovieSearch("");
         setCurrentGenre("");
+        loadCurrentMovies("initial");
     }
 
     const handleMovieSearchChange = (newSearch) => {
         setMovieSearch(newSearch);
         setCurrentMoviePage(1);
-        loadCurrentMovies();
+        loadCurrentMovies("search");
     }
 
     const handleGenreChange = (newGenre) => {
@@ -67,7 +69,7 @@ const App = () => {
             setCurrentGenre(newGenre);
         }
         setCurrentMoviePage(1);
-        loadCurrentMovies();
+        loadCurrentMovies("genre");
     }
 
     const handleInteraction = (star, id) => {
@@ -78,14 +80,19 @@ const App = () => {
         console.log(selectedMovies);
     };    
 
-    const loadCurrentMovies = () => {
+    const loadCurrentMovies = (type) => {
+        // type specifies why the method is called
+        if (type === "page" && currentMoviePage === 0) {
+            setCurrentMoviePage(currentMoviePage + 1);
+            return; // on page 1 you can't go to the left
+        }
         let newCurrentMovies = [];
         let counter = 0;
         for (let movie of allMovies) {
             if (!currentGenre || currentGenre.trim() === '' || movie.genres.includes(currentGenre)) {
                 counter ++;
                 if (counter > moviesPerPage * (currentMoviePage-1)) {
-                    if (!movieSearch || movieSearch.trim() === '' || movie.title.startsWith(movieSearch)) {
+                    if (!movieSearch || movieSearch.trim() === '' || movie.title.toLowerCase().startsWith(movieSearch.toLowerCase())) {
                         newCurrentMovies.push(movie);
                         if (counter >= moviesPerPage * currentMoviePage) {
                             break;
@@ -93,6 +100,10 @@ const App = () => {
                     }
                 }
             }
+        }
+        if (type === "page" && newCurrentMovies.length === 0) {
+            setCurrentMoviePage(currentMoviePage - 1);
+            return; // on the last page you can't go to the right
         }
         setCurrentMovies(newCurrentMovies);
     } 
@@ -169,7 +180,7 @@ const App = () => {
             };
             fetchGenreData();
 
-            loadCurrentMovies();
+            loadCurrentMovies("initial");
             setLoadingMovies(false);
             console.log("Current movies loaded.");
         } catch (error) {

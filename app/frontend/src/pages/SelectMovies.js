@@ -1,3 +1,5 @@
+import './SelectMovies.css';
+
 import { useNavigate } from 'react-router-dom';
 import MovieCard from '../components/MovieCard';
 
@@ -10,7 +12,7 @@ const SelectMovies = ({ user, language, onSearchChange, currentMovies, genres, o
     }
 
     return (
-        <div className="container">
+        <div className="container-fluid">
             <nav className="navbar navbar-expand-sm txt-color bg-color">
                 <div className="container-fluid">
                     <div className="collapse navbar-collapse" id="mynavbar">
@@ -66,20 +68,20 @@ const SelectMovies = ({ user, language, onSearchChange, currentMovies, genres, o
                 </div>
             )}
             <div className="row justify-content-center">
-                <button disabled={selectedNumber < 10} style={{cursor: 'not-allowed', opacity: '0.5'}} className="btn btn-color" onClick={handleClick}>
+                <button disabled={selectedNumber < 10}   style={{cursor: selectedNumber < 10 ? 'not-allowed' : 'pointer', opacity: selectedNumber < 10 ? '0.5' : '1'}} className="btn btn-color" onClick={handleClick}>
                     <span>Match me!</span>
                 </button>
             </div>
             <div className="row justify-content-center">
-            <div className="col-2">
+            <div className="col-2 text-center point-hover" onClick={() => {handlePageChange(-1)}}>
                 {currentMoviePage > 0 ? (
-                    <i className="fas fa-2x fa-arrow-left" onClick={handlePageChange(-1)}></i>
+                    <i className="fas fa-2x fa-arrow-left"></i>
                 ) : null}            
             </div>
             <div className="col-8"></div>
-            <div className="col-2">
+            <div className="col-2 text-center point-hover" onClick={() => {handlePageChange(1)}}>
                 {currentMoviePage < 10 ? (
-                    <i className="fas fa-2x fa-arrow-right" onClick={handlePageChange(1)}></i>
+                    <i className="fas fa-2x fa-arrow-right"></i>
                 ) : null}
             </div>
             </div>
