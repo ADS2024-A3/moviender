@@ -1,6 +1,6 @@
 import MovieCard from '../components/MovieCard';
 
-const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, genres, currentGenre, onGenreChange }) => {
+const ShowMovies = ({ user, language, search, onSearchChange, currentMovies, genres, currentGenre, onGenreChange }) => {
     return (
         <div className="container">
             <nav className="navbar navbar-expand-sm txt-color bg-color">
@@ -55,4 +55,4 @@ const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, g
     );
 }
 
-export default SelectMovies;
+export default ShowMovies;
