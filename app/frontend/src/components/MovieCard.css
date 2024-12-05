@@ -1,7 +1,7 @@
 /* Ensures all cards have the same size */
 .movie-card {
-    width: 20rem;
-    height: 36rem; /* Fixed height for consistency */
+    width: 18rem;
+    height: 35rem; /* Fixed height for consistency */
     margin: 2%;
     border: 1px solid var(--primary-color); /* Default border */
     display: flex;

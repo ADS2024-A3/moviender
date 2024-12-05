@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import './MovieCard.css';
+import itsAMatch from '../ressources/itsAMatch.png'; // Import the image
 
-const MovieCard = ({ id, title, genres, ratingCount, year, tmdbId, handleInteraction, isRecommendation, prediction }) => {
-    const [rating, setRating] = useState(0); // Current selected rating
-    const [hover, setHover] = useState(0); // Current hovered star index
+const MovieCard = ({ id, title, genres, ratingCount, year, tmdbId, handleInteraction, isRecommendation, prediction, initialStars }) => {
+    const [rating, setRating] = useState(initialStars); // Current selected rating
+    const [hover, setHover] = useState(initialStars); // Current hovered star index
     const [hoverTimes, setHoverTimes] = useState(false);
     const [hoverHeart, setHoverHeart] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false); // State to toggle modal visibility
+    const [isModal2Visible, setModal2Visible] = useState(false);
     const [imagePath, setImagePath] = useState(''); // State for fetched image URL
     const [trailerPath, setTrailerPath] = useState('');
     const [overview, setOverview] = useState('');
 
     // Fetch movie image from TMDB
     useEffect(() => {
+        console.log(initialStars)
         const fetchMovieImage = async () => {
             const apiKey = '6a9dbbf48dff84a52383420d86e84b02'; // Replace with your TMDB API Key
             const baseImageUrl = 'https://image.tmdb.org/t/p/w500';
@@ -95,7 +98,11 @@ const MovieCard = ({ id, title, genres, ratingCount, year, tmdbId, handleInterac
 
     const handleLike = () => {
         setHoverHeart(! hoverHeart);
-        setModalVisible(true);
+        setModal2Visible(true);
+        setTimeout(() => {
+            setModal2Visible(false);
+            setModalVisible(true);
+        }, 2000);
     }
 
     return (
@@ -118,7 +125,7 @@ const MovieCard = ({ id, title, genres, ratingCount, year, tmdbId, handleInterac
                                 </div>
                             </div>
                         ) : (
-                            <div className="col star-rating">
+                            <div className="container-fluid star-rating">
                                 {[1, 2, 3, 4, 5].map((star) => (
                                     <i
                                         key={star}
@@ -194,6 +201,13 @@ const MovieCard = ({ id, title, genres, ratingCount, year, tmdbId, handleInterac
                         )}
                         </div>
                     </div>
+                </div>
+            </div>
+
+            {/* Bootstrap Modal */}
+            <div className={`item-color modal fade ${isModal2Visible ? 'show' : ''}`} id={`movieModal2${id}`} tabIndex="-1" aria-labelledby={`movieModal2Label${id}`} aria-hidden="true" style={{ display: isModal2Visible ? 'block' : 'none' }}>
+                <div style={{textAlign: 'center'}} className="modal-dialog modal-lg justify-content-center">
+                    <img src={itsAMatch} alt="Description" />
                 </div>
             </div>
         </div>

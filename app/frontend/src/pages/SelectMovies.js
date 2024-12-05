@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MovieCard from '../components/MovieCard';
 
-const SelectMovies = ({ user, language, onSearchChange, currentMovies, genres, onGenreChange, handleInteraction, loadRecommendations, loadingMovies, selectedNumber, handleReset, currentMoviePage, handlePageChange }) => {
+const SelectMovies = ({ user, language, onSearchChange, currentMovies, genres, onGenreChange, handleInteraction, loadRecommendations, loadingMovies, selectedMovies, handleReset, currentMoviePage, handlePageChange }) => {
     const [currentGenre, setCurrentGenre] = useState("");
     const navigate = useNavigate();
 
@@ -70,8 +70,8 @@ const SelectMovies = ({ user, language, onSearchChange, currentMovies, genres, o
                 <div className="row justify-content-center">
                     {currentMovies.length > 0 ? (
                         currentMovies.map((movie, index) => (
-                            <div key={index} className="col-sm-12 col-md-6 col-lg-3 mb-4 d-flex justify-content-center">
-                                <MovieCard key={index} id={movie.movieId} title={movie.title} genres={movie.genres} ratingCount={movie.ratingCount} year={movie.year} tmdbId={movie.tmdbId} handleInteraction={handleInteraction} isRecommendation={false} />
+                            <div key={movie.movieId} className="col-sm-12 col-md-6 col-lg-3 mb-4 d-flex justify-content-center">
+                                <MovieCard key={movie.movieId} id={movie.movieId} title={movie.title} genres={movie.genres} ratingCount={movie.ratingCount} year={movie.year} tmdbId={movie.tmdbId} handleInteraction={handleInteraction} isRecommendation={false} initialStars={Object.keys(selectedMovies).includes(movie.movieId.toString()) ? (selectedMovies[movie.movieId]): (0)} />
                             </div>
                         ))
                     ) : (
@@ -80,7 +80,7 @@ const SelectMovies = ({ user, language, onSearchChange, currentMovies, genres, o
                 </div>
             )}
             <div className="row justify-content-center">
-                <button disabled={selectedNumber < 10}   style={{cursor: selectedNumber < 10 ? 'not-allowed' : 'pointer', opacity: selectedNumber < 10 ? '0.5' : '1'}} className="btn btn-color" onClick={handleClick}>
+                <button disabled={Object.keys(selectedMovies).length < 10}   style={{cursor: Object.keys(selectedMovies).length < 10 ? 'not-allowed' : 'pointer', opacity: Object.keys(selectedMovies).length < 10 ? '0.5' : '1'}} className="btn btn-color" onClick={handleClick}>
                     <span>Match me!</span>
                 </button>
             </div>

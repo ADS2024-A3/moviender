@@ -203,7 +203,7 @@ const App = () => {
             <Router>
                 <NavBar onColorChange={handleColorChange} onLanguageChange={handleLanguageChange} onSearchChange={handleSearchChange} language={language} /> 
                 <Routes>
-                    <Route exact path="/" element={<SelectMovies user={user} language={language} search={search} onSearchChange={handleMovieSearchChange} currentMovies={currentMovies} genres={genres} currentGenre={currentGenre} onGenreChange={handleGenreChange} handleInteraction={handleInteraction} loadRecommendations={loadRecommendations} loadingMovies={loadingMovies} selectedNumber={Object.keys(selectedMovies).length} handleReset={handleReset} currentMoviePage={currentMoviePage} handlePageChange={handlePageChange} />} />
+                    <Route exact path="/" element={<SelectMovies user={user} language={language} search={search} onSearchChange={handleMovieSearchChange} currentMovies={currentMovies} genres={genres} currentGenre={currentGenre} onGenreChange={handleGenreChange} handleInteraction={handleInteraction} loadRecommendations={loadRecommendations} loadingMovies={loadingMovies} selectedMovies={selectedMovies} handleReset={handleReset} currentMoviePage={currentMoviePage} handlePageChange={handlePageChange} />} />
                     <Route exact path="/recommendations" element={<ShowMovies user={user} language={language} currentMovies={recommendedMovies} loadingMovies={loadingRecommendedMovies} predictions={recommendedMoviesRating} />} />
                     <Route path="*" element={<NoSite language={language} />} />
                 </Routes>
