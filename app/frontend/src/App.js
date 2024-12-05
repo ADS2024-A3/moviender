@@ -9,7 +9,7 @@ import SelectMovies from './pages/SelectMovies';
 import ShowMovies from './pages/ShowMovies';
 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 const App = () => {
     const moviesPerPage = 10;
@@ -80,7 +80,7 @@ const App = () => {
         console.log(selectedMovies);
     };    
 
-    const loadCurrentMovies = (type) => {
+    const loadCurrentMovies = useCallback((type, movies = allMovies) => {
         // type specifies why the method is called
         if (type === "page" && currentMoviePage === 0) {
             setCurrentMoviePage(currentMoviePage + 1);
@@ -88,7 +88,7 @@ const App = () => {
         }
         let newCurrentMovies = [];
         let counter = 0;
-        for (let movie of allMovies) {
+        for (let movie of movies) {
             if (!currentGenre || currentGenre.trim() === '' || movie.genres.includes(currentGenre)) {
                 counter ++;
                 if (counter > moviesPerPage * (currentMoviePage-1)) {
@@ -106,7 +106,7 @@ const App = () => {
             return; // on the last page you can't go to the right
         }
         setCurrentMovies(newCurrentMovies);
-    } 
+    }, [allMovies, currentGenre, currentMoviePage, movieSearch]);
 
     const loadRecommendations = async () => {
         try {
@@ -145,48 +145,47 @@ const App = () => {
         }
     }
 
-    const loadAllMovies = async () => {
-        try {
-            const fetchData = async () => {
-                try {
-                    const response = await fetch("http://127.0.0.1:5000/api/movies");
-                    const data = await response.json();
-                    if (data) {
-                        console.log('Movies found:', data);
-                        setAllMovies(data);
-                    } else {
-                        console.error('Movies not found.');
-                    }
-                } catch (error) {
-                    console.error('Error fetching movie data:', error);
+    const loadAllMovies = useCallback(async () => {
+        const fetchMovies = async () => {
+            try {
+                const response = await fetch("http://127.0.0.1:5000/api/movies");
+                const data = await response.json();
+                if (data) {
+                    console.log('Movies found:', data);
+                    setAllMovies(data);
+                    return data;
+                } else {
+                    console.error('Movies not found.');
                 }
-            };
-            fetchData();
+            } catch (error) {
+                console.error('Error fetching movie data:', error);
+            }
+        };
 
-            const fetchGenreData = async () => {
-                try {
-                    const response = await fetch("http://127.0.0.1:5000/api/genres");
-                    let data = await response.json();
-                    if (data && data !== "unknown") {
-                        console.log('Genres found:', data);
-                        data = data.filter(item => item !== "unknown").sort();
-                        setGenres(data);
-                    } else {
-                        console.error('Genres not found.');
-                    }
-                } catch (error) {
-                    console.error('Error fetching genres data:', error);
+        const fetchGenreData = async () => {
+            try {
+                const response = await fetch("http://127.0.0.1:5000/api/genres");
+                let data = await response.json();
+                if (data && data !== "unknown") {
+                    console.log('Genres found:', data);
+                    data = data.filter(item => item !== "unknown").sort();
+                    setGenres(data);
+                    return data;
+                } else {
+                    console.error('Genres not found.');
                 }
-            };
-            fetchGenreData();
+            } catch (error) {
+                console.error('Error fetching genres data:', error);
+            }
+        };
 
-            loadCurrentMovies("initial");
-            setLoadingMovies(false);
-            console.log("Current movies loaded.");
-        } catch (error) {
-            console.error('Error while loading all movies:', error);
-        }
-    };
+        fetchGenreData();
+        const movies = await fetchMovies();
+
+        loadCurrentMovies("initial", movies);
+        setLoadingMovies(false);
+        console.log("Current movies loaded.");
+    }, [loadCurrentMovies]);
 
     useEffect(() => {
         document.documentElement.style.setProperty('--primary-color', primaryColor);
@@ -196,10 +195,8 @@ const App = () => {
     }, [primaryColor, secondaryColor, textColor]); 
 
     useEffect(() => {
-        if (allMovies.length === 0) {  // Check if movies have already been loaded
-            loadAllMovies();
-        }
-    });
+        loadAllMovies();
+    }, [loadAllMovies]);
 
     return (
         <div className="App">
