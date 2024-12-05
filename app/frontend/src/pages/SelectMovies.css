@@ -1,3 +1,16 @@
 .point-hover:hover {
     cursor:pointer;
 }
+
+/* Individual genre badge */
+.genre-badge {
+    background-color: var(--secondary-color); /* Use your secondary theme color */
+    color: #fff; /* Text color for the genre */
+    font-size: 0.9rem; /* Slightly smaller font */
+    padding: 0.2rem 0.5rem; /* Adjust padding for size */
+    border-radius: 1rem; /* Rounded corners */
+    white-space: nowrap; /* Prevent text wrapping inside a badge */
+    text-align: center;
+    display: inline-block; /* Ensures each badge is inline */
+    cursor: default; /* Prevent click cursor unless interaction is added */
+}

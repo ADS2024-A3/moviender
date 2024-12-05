@@ -93,6 +93,11 @@ const MovieCard = ({ id, title, genres, ratingCount, year, tmdbId, handleInterac
         handleInteraction(star, id);
     };
 
+    const handleLike = () => {
+        setHoverHeart(! hoverHeart);
+        setModalVisible(true);
+    }
+
     return (
         <div>
             {/* Movie Card */}
@@ -100,21 +105,7 @@ const MovieCard = ({ id, title, genres, ratingCount, year, tmdbId, handleInterac
                 <img src={imagePath} className="card-img-top movie-card-img" alt={title} />
                 <div className="card-body">
                     <h5 className="card-title item-color">{title}</h5>
-                    <div className="genres-container">
-                        {genres.map((genre, index) => (
-                            <span key={index} className="genre-badge item-color">{genre}</span>
-                        ))}
-                    </div>
                 </div>
-                <ul className="list-group list-group-flush">
-                    {isRecommendation? (
-                        <div>
-                            <li className="list-group-item item-color">Rating count: {ratingCount}</li>
-                            <li className="list-group-item item-color">Predicted rating: {parseFloat(prediction).toFixed(2) || 'N/A'}</li>
-                        </div>
-                    ) : (null)}
-                    <li className="list-group-item item-color">Release: {year}</li>
-                    </ul>
                 <div className="card-footer">
                         {isRecommendation ? (
                             <div className="row">
@@ -122,8 +113,8 @@ const MovieCard = ({ id, title, genres, ratingCount, year, tmdbId, handleInterac
                                     <i className={`item-color fa-times fa-2x ${hoverTimes ? 'fas' : 'fas'}`} onMouseEnter={() => setHoverTimes(true)} onMouseLeave={() => { setHoverTimes(false) }}></i>
                                 </div>
                                 <div className="col-8"></div>
-                                <div className="col-2">
-                                    <i className={`item-color fa-heart fa-2x ${hoverHeart ? 'fas' : 'far'}`} onMouseEnter={() => setHoverHeart(true)} onMouseLeave={() => { setHoverHeart(false) }}></i>
+                                <div style={{textAlign: 'right'}} className="col-2">
+                                    <i className={`item-color fa-heart fa-2x ${hoverHeart ? 'fas' : 'far'}`} onMouseEnter={() => setHoverHeart(true)} onMouseLeave={() => { setHoverHeart(false) }} onClick={() => {handleLike()}}></i>
                                 </div>
                             </div>
                         ) : (
@@ -143,7 +134,7 @@ const MovieCard = ({ id, title, genres, ratingCount, year, tmdbId, handleInterac
             </div>
 
             {/* Bootstrap Modal */}
-            <div className={`modal fade ${isModalVisible ? 'show' : ''}`} id={`movieModal${id}`} tabIndex="-1" aria-labelledby={`movieModalLabel${id}`} aria-hidden="true" style={{ display: isModalVisible ? 'block' : 'none' }}>
+            <div className={`item-color modal fade ${isModalVisible ? 'show' : ''}`} id={`movieModal${id}`} tabIndex="-1" aria-labelledby={`movieModalLabel${id}`} aria-hidden="true" style={{ display: isModalVisible ? 'block' : 'none' }}>
                 <div className="modal-dialog modal-lg"> {/* Use modal-lg for larger modal size */}
                     <div className="modal-content">
                         <div className="modal-header">
@@ -151,9 +142,20 @@ const MovieCard = ({ id, title, genres, ratingCount, year, tmdbId, handleInterac
                             <button onClick={handleCloseModal} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body" style={{ overflowY: 'auto', maxHeight: '70vh' }}> {/* Make the modal body scrollable with a max height */}
-                            <p><strong>Genres:</strong> {genres.join(', ')}</p>
+                            <div className="genres-container">
+                                {genres.map((genre, index) => (
+                                    <span key={index} className="genre-badge item-color">{genre}</span>
+                                ))}
+                            </div>
+                            <br></br>
                             <p><strong>Release Date:</strong> {year}</p>
                             <p><strong>Overview:</strong> {overview}</p>
+                            {isRecommendation? (
+                                <div>
+                                    <p><strong>Rating count: {ratingCount}</strong></p>
+                                    <p><strong>Predicted rating: {parseFloat(prediction).toFixed(2) || 'N/A'}</strong></p>
+                                </div>
+                            ) : (null)}
 
                             {/* YouTube Trailer Embed */}
                             <iframe 
@@ -167,7 +169,29 @@ const MovieCard = ({ id, title, genres, ratingCount, year, tmdbId, handleInterac
                             ></iframe>
                         </div>
                         <div className="modal-footer">
-                            <button onClick={handleCloseModal} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        {isRecommendation ? (
+                            <div className="container-fluid row">
+                                <div className="col-2">
+                                    <i className={`item-color fa-times fa-2x ${hoverTimes ? 'fas' : 'fas'}`} onMouseEnter={() => setHoverTimes(true)} onMouseLeave={() => { setHoverTimes(false) }}></i>
+                                </div>
+                                <div className="col-8"></div>
+                                <div style={{textAlign: 'right'}} className="col-2">
+                                    <i className={`item-color fa-heart fa-2x ${hoverHeart ? 'fas' : 'far'}`} onMouseEnter={() => setHoverHeart(true)} onMouseLeave={() => { setHoverHeart(false) }} onClick={() => handleLike()} ></i>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="col star-rating">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <i
+                                        key={star}
+                                        className={`fa-star ${hover >= star || rating >= star ? 'fas' : 'far'}`}
+                                        onMouseEnter={() => setHover(star)} // Temporary hover effect
+                                        onMouseLeave={() => setHover(0)}  // Reset hover effect
+                                        onClick={() => { handleRatingClick(star) }}   // Permanently set rating
+                                    ></i>
+                                ))}
+                            </div>
+                        )}
                         </div>
                     </div>
                 </div>

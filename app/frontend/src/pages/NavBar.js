@@ -143,18 +143,6 @@ const NavBar = ({language, onColorChange, onLanguageChange, onSearchChange}) => 
                 <a className="nav-link item-color" href=""><i className="fa-brands fa-x-twitter" aria-label="X-Twitter"></i></a>
                 </li>
             </ul>
-            <form className="d-flex">
-                <input className="form-control me-2" type="text" placeholder={
-                    language === 'Deutsch' ? 'Suche' :
-                    language === 'Englisch' ? 'Search' :
-                    language === 'Spanisch' ? 'Busca' :
-                    'Suche'
-                    } onChange={handleSearchChange}
-                />
-                <button className="btn btn-color" type="button">
-                <i className="fa-solid fa-magnifying-glass"></i>
-                </button>
-            </form>
             </div>
         </div>
     </nav>

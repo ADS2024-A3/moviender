@@ -1,14 +1,21 @@
 import './SelectMovies.css';
 
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MovieCard from '../components/MovieCard';
 
 const SelectMovies = ({ user, language, onSearchChange, currentMovies, genres, onGenreChange, handleInteraction, loadRecommendations, loadingMovies, selectedNumber, handleReset, currentMoviePage, handlePageChange }) => {
+    const [currentGenre, setCurrentGenre] = useState("");
     const navigate = useNavigate();
 
     const handleClick = () => {
         loadRecommendations();
         navigate('/recommendations');
+    }
+
+    const handleGenreChange = (genre) => {
+        onGenreChange(genre);
+        setCurrentGenre(genre);
     }
 
     return (
@@ -25,7 +32,7 @@ const SelectMovies = ({ user, language, onSearchChange, currentMovies, genres, o
                         </button>
                         <ul className="dropdown-menu drop-item-color" aria-labelledby="navbarDropdownMenuLink1">
                             {genres.map((genre, index) => (
-                            <li key={index}><button className="dropdown-item" id="buttonDeutsch" onClick={() => onGenreChange(genre)}>
+                            <li key={index}><button className="dropdown-item" id="buttonDeutsch" onClick={() => handleGenreChange(genre)}>
                             {
                                 genre
                             }
@@ -33,11 +40,16 @@ const SelectMovies = ({ user, language, onSearchChange, currentMovies, genres, o
                             ))}
                         </ul>
                         </li>
+                        {currentGenre !== "" ? (
+                            <button style={{color: 'white'}} className="navbar-brand genre-badge" href="/">
+                                {currentGenre}
+                            </button>
+                        ): (null)}
                     </ul>
-                    <button className="navbar-brand" href="/" onClick={handleReset}>
-                        Reset
-                    </button>
                     <form className="d-flex">
+                        <button style={{color: 'white'}} className="navbar-brand btn btn-color" href="/" onClick={handleReset}>
+                            Reset
+                        </button>
                         <input className="form-control me-2" type="text" placeholder={
                             language === 'Deutsch' ? 'Suche' :
                             language === 'Englisch' ? 'Search' :
@@ -63,7 +75,7 @@ const SelectMovies = ({ user, language, onSearchChange, currentMovies, genres, o
                             </div>
                         ))
                     ) : (
-                        <p>No movies to display.</p>  // Show message if no movies are available
+                        <p style={{textAlign: 'center'}} className="item-color">We couldn't find a match for you. Please try again with different filters.</p>
                     )}
                 </div>
             )}
@@ -73,14 +85,14 @@ const SelectMovies = ({ user, language, onSearchChange, currentMovies, genres, o
                 </button>
             </div>
             <div className="row justify-content-center">
-            <div className="col-2 text-center point-hover" onClick={() => {handlePageChange(-1)}}>
-                {currentMoviePage > 0 ? (
+            <div className="col-2 text-center point-hover item-color" onClick={() => {handlePageChange(-1)}}>
+                {currentMoviePage > 0 && currentMovies.length > 0 ? (
                     <i className="fas fa-2x fa-arrow-left"></i>
                 ) : null}            
             </div>
             <div className="col-8"></div>
-            <div className="col-2 text-center point-hover" onClick={() => {handlePageChange(1)}}>
-                {currentMoviePage < 10 ? (
+            <div className="col-2 text-center point-hover item-color" onClick={() => {handlePageChange(1)}}>
+                {currentMoviePage < 10 && currentMovies.length > 0 ? (
                     <i className="fas fa-2x fa-arrow-right"></i>
                 ) : null}
             </div>

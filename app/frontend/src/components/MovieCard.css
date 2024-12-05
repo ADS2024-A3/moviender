@@ -1,7 +1,7 @@
 /* Ensures all cards have the same size */
 .movie-card {
     width: 20rem;
-    height: 44rem; /* Fixed height for consistency */
+    height: 36rem; /* Fixed height for consistency */
     margin: 2%;
     border: 1px solid var(--primary-color); /* Default border */
     display: flex;
@@ -26,11 +26,13 @@
     margin-bottom: 1rem; /* Add spacing between the image and the next content */
 }
 
-/* Title and text consistency */
 .card-title, .card-text {
-    overflow: hidden; /* Prevent overflowing text */
-    text-overflow: ellipsis; /* Add ellipsis (...) for overflowed content */
-    white-space: nowrap; /* Ensure text stays on one line */
+    white-space: nowrap;         /* Prevent text from wrapping */
+    overflow: hidden;            /* Hide the overflowed text */
+    text-overflow: ellipsis;     /* Add ellipsis (...) for overflowed content */
+    width: 100%;                 /* Ensure the element has a defined width */
+    display: block; 
+    text-align: center;             /* Ensure block-level element behavior */
 }
 
 /* Ensures the card body adjusts its height properly */
