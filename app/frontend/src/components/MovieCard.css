@@ -1,43 +1,66 @@
+/* Ensures all cards have the same size */
 .movie-card {
-    width: 18rem;
-    height: 28rem; /* Fixed height for consistency */
+    width: 20rem;
+    height: 36rem; /* Fixed height for consistency */
     margin: 2%;
-
     border: 1px solid var(--primary-color); /* Default border */
-    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions for both */
+    display: flex;
+    flex-direction: column; /* Ensures content stacks vertically */
+    justify-content: space-between; /* Evenly distribute space inside */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
-  
+
+/* Hover effects for card */
 .movie-card:hover {
-    border-color: var(--secondary-color); /* Change the border color to green */
-    box-shadow: 0 0 10px 5px var(--secondary-color); /* Add glowing effect */
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 10px 5px var(--secondary-color);
     cursor: pointer;
 }
 
+/* Image styling */
 .movie-card-img {
     width: 100%;
-    height: 14rem; /* Adjust height to fit within the card */
-    object-fit: cover; /* Ensures image covers the container proportionally */
+    height: 26rem; /* Increased height to give the image more space */
+    object-fit: cover; /* Ensures the image scales proportionally and fills the container */
+    border-bottom: 1px solid var(--primary-color); /* Optional: adds a separation between the image and the card content */
+    margin-bottom: 1rem; /* Add spacing between the image and the next content */
 }
 
-.item-color {
-    color: var(--primary-color);
+.card-title, .card-text {
+    white-space: nowrap;         /* Prevent text from wrapping */
+    overflow: hidden;            /* Hide the overflowed text */
+    text-overflow: ellipsis;     /* Add ellipsis (...) for overflowed content */
+    width: 100%;                 /* Ensure the element has a defined width */
+    display: block; 
+    text-align: center;             /* Ensure block-level element behavior */
 }
 
-/* Container for the star rating */
+/* Ensures the card body adjusts its height properly */
+.card-body {
+    flex-grow: 1; /* Takes available space */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Consistent styling for the list group (release date) */
+.list-group {
+    margin-top: auto; /* Push to the bottom of the card */
+}
+
+.list-group-item {
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* Star rating styling */
 .star-rating {
     display: flex;
     justify-content: center;
     margin-top: 1rem;
 }
 
-/* Container for the star rating */
-.star-rating {
-    display: flex;
-    justify-content: center;
-    margin-top: 1rem;
-}
-
-/* Font Awesome stars */
 .star-rating .fa-star {
     font-size: 1.5rem;
     margin: 0 0.2rem;
@@ -46,12 +69,31 @@
     transition: color 0.2s;
 }
 
-/* Filled stars */
 .star-rating .fa-star.fas {
     color: #ffd700; /* Gold for selected or rated stars */
 }
 
-/* Hover effect */
 .star-rating .fa-star:hover {
     color: #ffcc00;
+}
+
+/* Container for genres */
+.genres-container {
+    display: flex;
+    flex-wrap: wrap; /* Allows genres to wrap to the next line if needed */
+    gap: 0.5rem; /* Space between genre badges */
+    margin-top: 0.5rem;
+}
+
+/* Individual genre badge */
+.genre-badge {
+    background-color: var(--secondary-color); /* Use your secondary theme color */
+    color: #fff; /* Text color for the genre */
+    font-size: 0.9rem; /* Slightly smaller font */
+    padding: 0.2rem 0.5rem; /* Adjust padding for size */
+    border-radius: 1rem; /* Rounded corners */
+    white-space: nowrap; /* Prevent text wrapping inside a badge */
+    text-align: center;
+    display: inline-block; /* Ensures each badge is inline */
+    cursor: default; /* Prevent click cursor unless interaction is added */
 }

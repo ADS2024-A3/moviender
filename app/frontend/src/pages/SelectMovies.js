@@ -1,7 +1,11 @@
+import './SelectMovies.css';
+
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MovieCard from '../components/MovieCard';
 
-const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, genres, currentGenre, onGenreChange, handleInteraction, loadRecommendations, loadingMovies }) => {
+const SelectMovies = ({ user, language, onSearchChange, currentMovies, genres, onGenreChange, handleInteraction, loadRecommendations, loadingMovies, selectedNumber, handleReset, currentMoviePage, handlePageChange }) => {
+    const [currentGenre, setCurrentGenre] = useState("");
     const navigate = useNavigate();
 
     const handleClick = () => {
@@ -9,8 +13,13 @@ const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, g
         navigate('/recommendations');
     }
 
+    const handleGenreChange = (genre) => {
+        onGenreChange(genre);
+        setCurrentGenre(genre);
+    }
+
     return (
-        <div className="container">
+        <div className="container-fluid">
             <nav className="navbar navbar-expand-sm txt-color bg-color">
                 <div className="container-fluid">
                     <div className="collapse navbar-collapse" id="mynavbar">
@@ -23,7 +32,7 @@ const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, g
                         </button>
                         <ul className="dropdown-menu drop-item-color" aria-labelledby="navbarDropdownMenuLink1">
                             {genres.map((genre, index) => (
-                            <li key={index}><button className="dropdown-item" id="buttonDeutsch" onClick={() => onGenreChange(genre)}>
+                            <li key={index}><button className="dropdown-item" id="buttonDeutsch" onClick={() => handleGenreChange(genre)}>
                             {
                                 genre
                             }
@@ -31,8 +40,16 @@ const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, g
                             ))}
                         </ul>
                         </li>
+                        {currentGenre !== "" ? (
+                            <button style={{color: 'white'}} className="navbar-brand genre-badge" href="/">
+                                {currentGenre}
+                            </button>
+                        ): (null)}
                     </ul>
                     <form className="d-flex">
+                        <button style={{color: 'white'}} className="navbar-brand btn btn-color" href="/" onClick={handleReset}>
+                            Reset
+                        </button>
                         <input className="form-control me-2" type="text" placeholder={
                             language === 'Deutsch' ? 'Suche' :
                             language === 'Englisch' ? 'Search' :
@@ -54,18 +71,31 @@ const SelectMovies = ({ user, language, search, onSearchChange, currentMovies, g
                     {currentMovies.length > 0 ? (
                         currentMovies.map((movie, index) => (
                             <div key={index} className="col-sm-12 col-md-6 col-lg-3 mb-4 d-flex justify-content-center">
-                                <MovieCard key={index} id={parseInt(index)} title={movie.title} description={movie.description} release={movie.release} handleInteraction={handleInteraction} isRecommendation={false} />
+                                <MovieCard key={index} id={movie.movieId} title={movie.title} genres={movie.genres} ratingCount={movie.ratingCount} year={movie.year} tmdbId={movie.tmdbId} handleInteraction={handleInteraction} isRecommendation={false} />
                             </div>
                         ))
                     ) : (
-                        <p>No movies to display.</p>  // Show message if no movies are available
+                        <p style={{textAlign: 'center'}} className="item-color">We couldn't find a match for you. Please try again with different filters.</p>
                     )}
                 </div>
             )}
             <div className="row justify-content-center">
-                <button className="btn btn-color" onClick={handleClick}>
+                <button disabled={selectedNumber < 10}   style={{cursor: selectedNumber < 10 ? 'not-allowed' : 'pointer', opacity: selectedNumber < 10 ? '0.5' : '1'}} className="btn btn-color" onClick={handleClick}>
                     <span>Match me!</span>
                 </button>
+            </div>
+            <div className="row justify-content-center">
+            <div className="col-2 text-center point-hover item-color" onClick={() => {handlePageChange(-1)}}>
+                {currentMoviePage > 0 && currentMovies.length > 0 ? (
+                    <i className="fas fa-2x fa-arrow-left"></i>
+                ) : null}            
+            </div>
+            <div className="col-8"></div>
+            <div className="col-2 text-center point-hover item-color" onClick={() => {handlePageChange(1)}}>
+                {currentMoviePage < 10 && currentMovies.length > 0 ? (
+                    <i className="fas fa-2x fa-arrow-right"></i>
+                ) : null}
+            </div>
             </div>
         </div>
     );
